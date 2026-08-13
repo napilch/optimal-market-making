@@ -58,3 +58,42 @@ def fig_skew():
     fig.tight_layout()
     fig.savefig("figures/fig3_skew.png", dpi=150)
     print("saved fig3")
+
+def fig_markouts():
+    from replay import prep, run_replay, markouts
+    df = prep()
+    hs = [1, 5, 10, 30, 60, 120]
+    fig, ax = plt.subplots(figsize=(7, 4.4))
+    for lab, kw, c in [("A-S", {"k":34.2}, "tab:blue"),
+                       ("naive 5c", {"naive_half":0.05}, "tab:red")]:
+        _, _, f = run_replay(df, **kw)
+        mo = markouts(df, f, horizons=tuple(hs))
+        ax.plot(hs, [mo[h].mean()*100 for h in hs], "o-", color=c, label=lab)
+    ax.axhline(0, color="black", lw=.6)
+    ax.set_xscale("log")
+    ax.set_xlabel("seconds after fill")
+    ax.set_ylabel("signed mid move (cents)")
+    ax.set_title("Passive fills are adversely selected", loc="left", fontsize=10)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig("figures/fig4_markouts.png", dpi=150)
+    print("saved fig4")
+
+def fig_real_inventory():
+    from replay import prep, run_replay
+    df = prep()
+    fig, ax = plt.subplots(figsize=(9, 4.4))
+    for lab, kw, c in [("A-S g=0.1", {"k":34.2}, "tab:blue"),
+                       ("A-S g=5.0", {"k":34.2,"gamma":5.0}, "tab:green"),
+                       ("naive 5c", {"naive_half":0.05}, "tab:red")]:
+        _, _, f = run_replay(df, **kw)
+        hrs = (f.time.values - 34200) / 3600.0
+        ax.plot(hrs, f.q_after.values, lw=1, color=c, label=lab)
+    ax.axhline(0, color="black", lw=.6)
+    ax.set_xlabel("hours after open")
+    ax.set_ylabel("inventory")
+    ax.set_title("Inventory on real AAPL flow, 2012-06-21", loc="left", fontsize=10)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig("figures/fig5_real_inventory.png", dpi=150)
+    print("saved fig5")
