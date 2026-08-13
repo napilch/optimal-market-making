@@ -119,3 +119,16 @@ that is already long has lowered its bid, so it stops catching a falling knife.
 - Sigma is estimated once for the whole session and held constant.
 - The model is the original A-S formulation with no inventory penalty at
   terminal time and no informed-trader component.
+
+## Parameter sensitivity
+
+The gamma=0.1 line in the inventory figure above reaches -60, comparable to the
+naive maker. This is expected: with gamma that small the skew term
+q*gamma*sigma^2*tau is negligible, so A-S quotes almost symmetrically but with a
+narrower spread, fills more often, and accumulates faster. Inventory control
+only binds at higher risk aversion, and gamma=5.0 holds the book near flat all
+day.
+
+Gamma has to be chosen for the volatility scale of the asset. The same is true
+of k, which is 34 for AAPL rather than the textbook 1.5. Neither parameter
+transfers between the simulation and the real book.
